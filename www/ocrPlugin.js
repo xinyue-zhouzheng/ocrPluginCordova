@@ -54,7 +54,18 @@ OcrPlugin = {
 	},
 
 	takePhoto: function() {
-		
+		function cameraSuccess(imageData) {
+            var image = document.getElementById('myImage');
+            image.src = "data:image/jpeg;base64," + imageData;
+        }
+
+        function cameraError(message) {
+            alert('Failed because: ' + message);
+        }
+
+        navigator.camera.getPicture(cameraSuccess, cameraError, {
+            destinationType: Camera.DestinationType.DATA_URL,
+        });
 	},
 	
 	recog: function(data){
