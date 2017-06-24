@@ -24,6 +24,7 @@ OcrPlugin = {
     "x-tid": "12345678",
 	},
 
+	imgData = Null,
 	version: "1.0.0",
 
 	init: function(options) {
@@ -53,17 +54,16 @@ OcrPlugin = {
 		return this.res
 	},
 
+	cameraSuccess: function(imageData) {
+		this.ImageData = "data:image/jpeg;base64," + imageData;
+	},
+
+	cameraError: function(message) {
+		alert("Failed because: " + message);
+	},
+
 	takePhoto: function() {
-		function cameraSuccess(imageData) {
-            var image = document.getElementById('myImage');
-            image.src = "data:image/jpeg;base64," + imageData;
-        }
-
-        function cameraError(message) {
-            alert('Failed because: ' + message);
-        }
-
-        navigator.camera.getPicture(cameraSuccess, cameraError, {
+        navigator.camera.getPicture(this.cameraSuccess, this.cameraError, {
             destinationType: Camera.DestinationType.DATA_URL,
         });
 	},
@@ -83,6 +83,17 @@ OcrPlugin = {
 			}
 		})
 		return result
+	},
+
+	takePhotoAndRecog: function() {
+		function cameraSuccess(imageData) {
+			this.imgData = this.ImageData = "data:image/jpeg;base64," + imageData;
+			result = this.recog();
+			return result;
+		},
+        navigator.camera.getPicture(cameraSuccess, this.cameraError, {
+            destinationType: Camera.DestinationType.DATA_URL,
+        });
 	},
 
 }
