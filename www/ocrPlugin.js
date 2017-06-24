@@ -10,8 +10,6 @@ if (typeof jQuery === 'undefined') {
 	}
 }(jQuery);
 
-
-
   
 OcrPlugin = {
 	defaults: {
@@ -24,7 +22,7 @@ OcrPlugin = {
     "x-tid": "12345678",
 	},
 
-	imgData = Null,
+	imgData: null,
 	version: "1.0.0",
 
 	init: function(options) {
@@ -54,17 +52,18 @@ OcrPlugin = {
 		return this.res
 	},
 
-	cameraSuccess: function(imageData) {
-		this.ImageData = "data:image/jpeg;base64," + imageData;
-	},
 
-	cameraError: function(message) {
-		alert("Failed because: " + message);
-	},
 
 	takePhoto: function() {
-        navigator.camera.getPicture(this.cameraSuccess, this.cameraError, {
-            destinationType: Camera.DestinationType.DATA_URL,
+		function cameraSuccess(imageData) {
+			this.ImageData = imageData;
+		}
+
+		function cameraError(message) {
+			alert("Failed because: " + message);
+		}
+        navigator.camera.getPicture(cameraSuccess, cameraError, {
+            destinationType: Camera.DestinationType.FILE_URI,
         });
 	},
 	
@@ -75,8 +74,8 @@ OcrPlugin = {
 			processData: false,
 			//crossDomain: true,
 			type: "POST",
-			url: "http://localhost:8800/",
-			data: "hello world",
+			url: "http://192.168.1.8:8800/",
+			data: data,
 			async:false,
 			success: function(res){
 				result = res;
@@ -87,12 +86,20 @@ OcrPlugin = {
 
 	takePhotoAndRecog: function() {
 		function cameraSuccess(imageData) {
-			this.imgData = this.ImageData = "data:image/jpeg;base64," + imageData;
-			result = this.recog();
+			// this.imgData = imageData;
+			console.log(this)
+			console.log(OcrPlugin)
+			result = OcrPlugin.recog(imageData);
+			console.log(result);
 			return result;
-		},
-        navigator.camera.getPicture(cameraSuccess, this.cameraError, {
-            destinationType: Camera.DestinationType.DATA_URL,
+		}
+
+		function cameraError(message) {
+			alert("Failed because: " + message);
+		}
+
+        navigator.camera.getPicture(cameraSuccess, cameraError, {
+            destinationType: Camera.DestinationType.DATA_URI,
         });
 	},
 

@@ -3,27 +3,54 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<script src=jQuery-2.1.3.min.js></script>
-		<script src=ocrPlugin.js></script>
+		<script type="text/javascript" src="cordova.js"></script>
+		<script src=js/index.js></script>
+		<script>app.initialize();</script>
+		
 		<title></title>
 	</head>
 	<body>
+	<button id="cameraBtn" style="display:none;">cameraButton</button>
+	<script src=jQuery-2.1.3.min.js></script>
+	<script src=ocrPlugin.js></script>
 	<script>
-	
-	
-	console.log( OcrPlugin)
-	OcrPlugin.init({
-		"x-app-key": "123",
-	    "x-sdk-version": "5.1",
-	    "x-request-date": new Date().toLocaleDateString(),
-	    "x-task-config": "lang=chinese_cn,capkey=ocr.cloud.template,property=idcard,templateIndex=0,templatePageIndex=1",
-	    "x-session-key": "456",
-	    "x-udid": "101:1234567890",
-	    "x-tid": "12345678",
-	})
+		$(function(){
+			$("#cameraBtn").on("click", function(){
+				console.log( OcrPlugin);
+				OcrPlugin.init({
+					"x-app-key": "123",
+				    "x-sdk-version": "5.1",
+				    "x-request-date": new Date().toLocaleDateString(),
+				    "x-task-config": "lang=chinese_cn,capkey=ocr.cloud.template,property=idcard,templateIndex=0,templatePageIndex=1",
+				    "x-session-key": "456",
+				    "x-udid": "101:1234567890",
+				    "x-tid": "12345678",
+				});
 
-	res = OcrPlugin.takePhotoAndRecog()
-	console.log(res)
+			
+				function cameraSuccess(imageData) {
+					// this.imgData = imageData;
+					console.log(this)
+					console.log(OcrPlugin)
+					result = OcrPlugin.recog(imageData);
+					console.log(result);
+					return result;
+				}
+
+				function cameraError(message) {
+					alert("Failed because: " + message);
+				}
+
+		        navigator.camera.getPicture(cameraSuccess, cameraError, {
+		            destinationType: Camera.DestinationType.DATA_URI,
+		        });
+	
+				
+			})
+
+		})
+	
+
 	</script>
 	</body>
 </html>
