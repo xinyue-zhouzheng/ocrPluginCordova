@@ -13,12 +13,12 @@ if (typeof jQuery === 'undefined') {
   
 var OcrPlugin = {
 	defaults: {
-	    "x-app-key": "",		//捷通开发者应用appkey
-	    "x-sdk-version": "5.1",	//sdk版本
-	    "x-request-date": "",	//请求日期
-	    //ocr识别配置串
+	    "x-app-key": "",		//捷通开发者应用appkey,必填
+	    "x-sdk-version": "5.1",	//sdk版本，必填
+	    "x-request-date": "",	//请求日期，必填
+	    //ocr识别配置串，必填
 	    "x-task-config": "lang=chinese_cn,capkey=ocr.cloud.template,property=idcard,templateIndex=0,templatePageIndex=0",
-	    "x-session-key": "",	//验证码
+	    "x-session-key": "",	//验证码，必填
 	    "x-udid": "101:1234567890",	//udid，必填
 	    // "x-tid": "12345678",
 	},
