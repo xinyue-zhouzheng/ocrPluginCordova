@@ -13,18 +13,19 @@ if (typeof jQuery === 'undefined') {
   
 var OcrPlugin = {
 	defaults: {
-	    "x-app-key": "",
-	    "x-sdk-version": "5.1",
-	    "x-request-date": "",
+	    "x-app-key": "",		//捷通开发者应用appkey
+	    "x-sdk-version": "5.1",	//sdk版本
+	    "x-request-date": "",	//请求日期
+	    //ocr识别配置串
 	    "x-task-config": "lang=chinese_cn,capkey=ocr.cloud.template,property=idcard,templateIndex=0,templatePageIndex=0",
-	    "x-session-key": "",
-	    "x-udid": "101:1234567890",
+	    "x-session-key": "",	//验证码
+	    "x-udid": "101:1234567890",	//udid，必填
 	    // "x-tid": "12345678",
 	},
 
 	recogTypeArray: [0, 1, 2],	//0-身份证正面，1-身份证反面，2-票据，默认为0
 	url: "http://api.hcicloud.com:8880/ocr/auto_recognise",
-	accountTypeArray: [0, 1],	//0-JT商用帐号， 1-JT测试账号，默认为0
+	//accountTypeArray: [0, 1],	//0-JT商用帐号， 1-JT测试账号，默认为0
 	version: "1.0.0",
 
 	init: function(options) {
@@ -54,10 +55,10 @@ var OcrPlugin = {
 			throw new Error("recogType must be one of (0, 1, 2)");
 		}
 
-		if (typeof options["accountType"] !== "undefined" && 
-				!(($.trim(options["accountType"])) in this.accountTypeArray)) {
-			throw new Error("recogType must be one of (0, 1)");
-		}
+		// if (typeof options["accountType"] !== "undefined" && 
+		// 		!(($.trim(options["accountType"])) in this.accountTypeArray)) {
+		// 	throw new Error("recogType must be one of (0, 1)");
+		// }
 	},
 
 	getOptions: function(options) {
@@ -79,9 +80,9 @@ var OcrPlugin = {
 
 		accountType = $.trim(options["accountType"]);
 
-		if (accountType == 1) {	//JT测试账号
-			this.url = "http://test.api.hcicloud.com:8880/ocr/auto_recognise";
-		}
+		// if (accountType == 1) {	//JT测试账号
+		// 	this.url = "http://test.api.hcicloud.com:8880/ocr/auto_recognise";
+		// }
 
 		options = $.extend({}, this.getDefaults(), newOption);
 
