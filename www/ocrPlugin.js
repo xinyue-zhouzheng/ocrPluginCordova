@@ -115,25 +115,6 @@ var OcrPlugin = {
 		return result
 	},
 
-	takePhotoAndRecog: function() {
-		function cameraSuccess(imageData) {
-			// this.imgData = imageData;
-			console.log(this)
-			console.log(OcrPlugin)
-			result = OcrPlugin.recog(imageData);
-			console.log(result);
-			return result;
-		}
-
-		function cameraError(message) {
-			alert("Failed because: " + message);
-		}
-
-        navigator.camera.getPicture(cameraSuccess, cameraError, {
-            destinationType: Camera.DestinationType.DATA_URI,
-        });
-	},
-
 }
 
 
