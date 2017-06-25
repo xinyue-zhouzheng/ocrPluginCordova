@@ -30,7 +30,7 @@ var OcrPlugin = {
 
 	init: function(options) {
 		this.options = this.getOptions(options);
-		console.log(this.options);
+		// console.log(this.options);
 	},
 
 	getDefaults: function() {
