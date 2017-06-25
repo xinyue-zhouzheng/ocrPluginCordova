@@ -55,10 +55,6 @@ var OcrPlugin = {
 			throw new Error("recogType must be one of (0, 1, 2)");
 		}
 
-		// if (typeof options["accountType"] !== "undefined" && 
-		// 		!(($.trim(options["accountType"])) in this.accountTypeArray)) {
-		// 	throw new Error("recogType must be one of (0, 1)");
-		// }
 	},
 
 	getOptions: function(options) {
@@ -77,12 +73,6 @@ var OcrPlugin = {
 		if (recogType == 2) {	//票据识别
 			newOption["x-task-config"] = "lang=chinese_cn,capkey=ocr.cloud.template,property=vat,templateIndex=0,templatePageIndex=0";
 		}
-
-		accountType = $.trim(options["accountType"]);
-
-		// if (accountType == 1) {	//JT测试账号
-		// 	this.url = "http://test.api.hcicloud.com:8880/ocr/auto_recognise";
-		// }
 
 		options = $.extend({}, this.getDefaults(), newOption);
 
