@@ -4,48 +4,48 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<script type="text/javascript" src="cordova.js"></script>
-		<script src=js/index.js></script>
+		<script src="js/index.js"></script>
 		<script>app.initialize();</script>
 		
 		<title></title>
 	</head>
 	<body>
 	<button id="cameraBtn" style="display:none;">cameraButton</button>
-	<script src=jQuery-2.1.3.min.js></script>
-	<script src=ocrPlugin.js></script>
+	<script src="jQuery-2.1.3.min.js"></script>
+	<script src="ocrPlugin.js"></script>
+	<script src="md5.min.js"></script>
 	<script>
 		$(function(){
-			$("#cameraBtn").on("click", function(){
-				console.log( OcrPlugin);
-				OcrPlugin.init({
-					"x-app-key": "123",
-				    "x-sdk-version": "5.1",
-				    "x-request-date": new Date().toLocaleDateString(),
-				    "x-task-config": "lang=chinese_cn,capkey=ocr.cloud.template,property=idcard,templateIndex=0,templatePageIndex=1",
-				    "x-session-key": "456",
-				    "x-udid": "101:1234567890",
-				    "x-tid": "12345678",
-				});
+			var curDate = new Date().toLocaleDateString();
+			var devKey = "53a0aad65cfea4f36496f9583471d9c9";
+			var sessionKey = md5(curDate + devKey);
 
-			
-				function cameraSuccess(imageData) {
-					// this.imgData = imageData;
-					console.log(this)
-					console.log(OcrPlugin)
-					result = OcrPlugin.recog(imageData);
-					console.log(result);
-					return result;
-				}
+			OcrPlugin.init({
+				"appKey": "e05d5454",
+			    "requestDate": curDate,
+			    "sessionKey": sessionKey,
+			    "recogType": 1,		//0-身份证正面，1-身份证反面，2-票据,默认为0
+			    "accountType": 1,	//0-JT商用帐号， 1-JT测试账号，默认为0
+			});
 
-				function cameraError(message) {
-					alert("Failed because: " + message);
-				}
-
-		        navigator.camera.getPicture(cameraSuccess, cameraError, {
-		            destinationType: Camera.DestinationType.DATA_URI,
-		        });
-	
+			function cameraSuccess(imageData) {
+				console.log(this)
+				console.log(OcrPlugin)
 				
+				result = OcrPlugin.recog(imageData);
+				console.log(result);
+				alert(result);
+			};
+
+			function cameraError(message) {
+				alert("Failed because: " + message);
+			};
+
+			$("#cameraBtn").on("click", function(){
+		        navigator.camera.getPicture(cameraSuccess, cameraError, {
+		            destinationType: Camera.DestinationType.DATA_URL,
+		            encodingType: Camera.EncodingType.JPEG,
+		        });
 			})
 
 		})

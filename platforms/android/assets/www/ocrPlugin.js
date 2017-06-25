@@ -11,70 +11,80 @@ if (typeof jQuery === 'undefined') {
 }(jQuery);
 
   
-OcrPlugin = {
+var OcrPlugin = {
 	defaults: {
-    "x-app-key": "",
-    "x-sdk-version": "5.1",
-    "x-request-date": new Date().toLocaleDateString(),
-    "x-task-config": "lang=chinese_cn,capkey=ocr.cloud.template,property=idcard,templateIndex=0,templatePageIndex=1",
-    "x-session-key": "",
-    "x-udid": "101:1234567890",
-    "x-tid": "12345678",
+	    "x-app-key": "",
+	    "x-sdk-version": "5.1",
+	    "x-request-date": "",
+	    "x-task-config": "lang=chinese_cn,capkey=ocr.cloud.template,property=idcard,templateIndex=0,templatePageIndex=0",
+	    "x-session-key": "",
+	    "x-udid": "101:1234567890",
+	    // "x-tid": "12345678",
 	},
 
-	imgData: null,
+	//recogType: 0,	//0-身份证正面，1-身份证反面，2-票据，默认为0
+	url: "http://api.hcicloud.com:8880/ocr/auto_recognise",
+	//accountType: 0, 	//0-JT商用帐号， 1-JT测试账号，默认为0
 	version: "1.0.0",
 
 	init: function(options) {
 		this.options = this.getOptions(options);
 		console.log(this.options);
-		if (!$.trim(this.options["x-app-key"])) {
-			throw new Error("x-app-key couldn't be empty");
-		} 
-			
-		if (!$.trim(this.options["x-session-key"])) {
-			throw new Error("x-session-key couldn't be empty");
-		} 
-		
 	},
 
 	getDefaults: function() {
-		return defaults
+		return this.defaults;
 	},
 
 	getOptions: function(options) {
-		options = $.extend({}, this.getDefaults, options);
-
-		return options
-	},
-
-	getResult: function() {
-		return this.res
-	},
-
-
-
-	takePhoto: function() {
-		function cameraSuccess(imageData) {
-			this.ImageData = imageData;
+		if (typeof options["appKey"] == "undefined" || !$.trim(options["appKey"])) {
+			throw new Error("appKey couldn't be empty");
+		} 	
+		if (typeof options["sessionKey"] == "undefined" || !$.trim(options["sessionKey"])) {
+			throw new Error("sessionKey couldn't be empty");
+		}
+		if (typeof options["requestDate"] == "undefined" || !$.trim(options["requestDate"])) {
+			throw new Error("requestDate couldn't be empty");
 		}
 
-		function cameraError(message) {
-			alert("Failed because: " + message);
+		newOption = {};
+		newOption["x-app-key"] = options["appKey"];
+		newOption["x-request-date"] = options["requestDate"];
+		newOption["x-session-key"] = options["sessionKey"];
+
+		if (options["recogType"] == 1) {	//身份证反面
+			newOption["x-task-config"] = "lang=chinese_cn,capkey=ocr.cloud.template,property=idcard,templateIndex=0,templatePageIndex=1";
 		}
-        navigator.camera.getPicture(cameraSuccess, cameraError, {
-            destinationType: Camera.DestinationType.FILE_URI,
-        });
+		if (options["recogType"] == 2) {	//票据识别
+			newOption["x-task-config"] = "lang=chinese_cn,capkey=ocr.cloud.template,property=vat,templateIndex=0,templatePageIndex=0";
+		}
+
+		if (options["accountType"] == 1) {	//JT测试账号
+			this.url = "http://test.api.hcicloud.com:8880/ocr/auto_recognise";
+		}
+
+		options = $.extend({}, this.getDefaults(), newOption);
+
+		return options;
+	},
+
+	dataToBlob: function(data) {
+				  
+		var bstr = atob(data), n = bstr.length, u8arr = new Uint8Array(n);
+		while(n--){
+			u8arr[n] = bstr.charCodeAt(n);
+		}
+		return new Blob([u8arr], {type:"image/jpeg"});
 	},
 	
 	recog: function(data){
 		var result;
+		data = this.dataToBlob(data);
 		$.ajax({
 			headers: this.options,
 			processData: false,
-			//crossDomain: true,
 			type: "POST",
-			url: "http://192.168.1.8:8800/",
+			url: this.url,
 			data: data,
 			async:false,
 			success: function(res){
