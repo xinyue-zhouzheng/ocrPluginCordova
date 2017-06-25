@@ -22,9 +22,9 @@ var OcrPlugin = {
 	    // "x-tid": "12345678",
 	},
 
-	//recogType: 0,	//0-身份证正面，1-身份证反面，2-票据，默认为0
+	recogTypeArray: [0, 1, 2],	//0-身份证正面，1-身份证反面，2-票据，默认为0
 	url: "http://api.hcicloud.com:8880/ocr/auto_recognise",
-	//accountType: 0, 	//0-JT商用帐号， 1-JT测试账号，默认为0
+	accountTypeArray: [0, 1],	//0-JT商用帐号， 1-JT测试账号，默认为0
 	version: "1.0.0",
 
 	init: function(options) {
@@ -36,30 +36,50 @@ var OcrPlugin = {
 		return this.defaults;
 	},
 
-	getOptions: function(options) {
-		if (typeof options["appKey"] == "undefined" || !$.trim(options["appKey"])) {
+	optionsVerify: function(options) {
+		if (typeof options["appKey"] === "undefined" || !$.trim(options["appKey"])) {
 			throw new Error("appKey couldn't be empty");
-		} 	
-		if (typeof options["sessionKey"] == "undefined" || !$.trim(options["sessionKey"])) {
+		} 
+
+		if (typeof options["sessionKey"] === "undefined" || !$.trim(options["sessionKey"])) {
 			throw new Error("sessionKey couldn't be empty");
 		}
-		if (typeof options["requestDate"] == "undefined" || !$.trim(options["requestDate"])) {
+
+		if (typeof options["requestDate"] === "undefined" || !$.trim(options["requestDate"])) {
 			throw new Error("requestDate couldn't be empty");
 		}
 
-		newOption = {};
-		newOption["x-app-key"] = options["appKey"];
-		newOption["x-request-date"] = options["requestDate"];
-		newOption["x-session-key"] = options["sessionKey"];
+		if (typeof options["recogType"] !== "undefined" && 
+				!(($.trim(options["recogType"])) in this.recogTypeArray)) {
+			throw new Error("recogType must be one of (0, 1, 2)");
+		}
 
-		if (options["recogType"] == 1) {	//身份证反面
+		if (typeof options["accountType"] !== "undefined" && 
+				!(($.trim(options["accountType"])) in this.accountTypeArray)) {
+			throw new Error("recogType must be one of (0, 1)");
+		}
+	},
+
+	getOptions: function(options) {
+
+		this.optionsVerify(options);
+		newOption = {};
+		newOption["x-app-key"] = $.trim(options["appKey"]);
+		newOption["x-request-date"] = $.trim(options["requestDate"]);
+		newOption["x-session-key"] = $.trim(options["sessionKey"]);
+
+		recogType = $.trim(options["recogType"]);
+
+		if (recogType == 1) {	//身份证反面
 			newOption["x-task-config"] = "lang=chinese_cn,capkey=ocr.cloud.template,property=idcard,templateIndex=0,templatePageIndex=1";
 		}
-		if (options["recogType"] == 2) {	//票据识别
+		if (recogType == 2) {	//票据识别
 			newOption["x-task-config"] = "lang=chinese_cn,capkey=ocr.cloud.template,property=vat,templateIndex=0,templatePageIndex=0";
 		}
 
-		if (options["accountType"] == 1) {	//JT测试账号
+		accountType = $.trim(options["accountType"]);
+
+		if (accountType == 1) {	//JT测试账号
 			this.url = "http://test.api.hcicloud.com:8880/ocr/auto_recognise";
 		}
 
